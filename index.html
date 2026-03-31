@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ArchZero Tube</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --accent-color: #00ff41; /* Cyberpunk Green */
+            --text-color: #ffffff;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .header {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            background: rgba(0,0,0,0.8);
+        }
+        .header h1 {
+            font-size: 18px;
+            margin: 0;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .input-container {
+            padding: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        input {
+            flex: 1;
+            background: #222;
+            border: 1px solid var(--accent-color);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            outline: none;
+        }
+        button {
+            background: var(--accent-color);
+            color: black;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #player-container {
+            flex: 1;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .placeholder {
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>ArchZero Tube Bypass</h1>
+</div>
+
+<div class="input-container">
+    <input type="text" id="videoUrl" placeholder="Вставь ссылку на YouTube...">
+    <button onclick="loadVideo()">PLAY</button>
+</div>
+
+<div id="player-container">
+    <div class="placeholder" id="msg">Ожидание сигнала...<br>Вставь ссылку сверху</div>
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // Развернуть на весь экран ТГ
+
+    function extractVideoID(url) {
+        const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[7].length == 11) ? match[7] : false;
+    }
+
+    function loadVideo() {
+        const url = document.getElementById('videoUrl').value;
+        const videoId = extractVideoID(url);
+        const container = document.getElementById('player-container');
+        
+        if (videoId) {
+            // Используем nocookie домен для обхода некоторых ограничений DPI
+            const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+            
+            container.innerHTML = `
+                <iframe 
+                    src="${embedUrl}" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>`;
+            
+            tg.MainButton.setText("ВИДЕО ЗАГРУЖЕНО").show();
+        } else {
+            alert("Ошибка: Неверная ссылка YouTube");
+        }
+    }
+
+    // Сообщаем ТГ, что приложение готово
+    tg.ready();
+</script>
+
+</body>
+</html>
